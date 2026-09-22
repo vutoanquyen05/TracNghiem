@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ôn tập Trắc nghiệm Azota</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="app">
+
+    <!-- Header App -->
+    <header class="app-header">
+        <div class="app-header__container">
+            <div class="app-header__brand" id="brandButton">
+                <i class="fa-solid fa-graduation-cap app-header__icon"></i>
+                <h1 class="app-header__title" id="quizTitle">Ôn Tập Trắc Nghiệm</h1>
+            </div>
+            <div class="app-header__actions" id="headerActions" style="display: none;">
+                <button class="btn btn--outline" id="btnRestart">
+                    <i class="fa-solid fa-rotate-left"></i> Làm lại
+                </button>
+                <button class="btn btn--secondary" id="btnNewFile">
+                    <i class="fa-solid fa-file-arrow-up"></i> File khác
+                </button>
+                <button class="btn btn--primary" id="btnSubmit">
+                    <i class="fa-solid fa-paper-plane"></i> Nộp bài
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="app-main">
+        <!-- 1. Màn hình Upload (Mặc định) -->
+        <section class="upload-screen" id="uploadScreen">
+            <div class="upload-card" id="dropZone">
+                <div class="upload-card__icon">
+                    <i class="fa-solid fa-cloud-arrow-up"></i>
+                </div>
+                <h2 class="upload-card__title">Tải lên bộ câu hỏi trắc nghiệm</h2>
+                <p class="upload-card__desc">
+                    Kéo & thả file <code>.txt</code> vào đây hoặc nhấn để chọn file từ máy tính
+                </p>
+                <input type="file" id="fileInput" accept=".txt" class="upload-card__input">
+                <button class="btn btn--primary btn--lg" id="btnSelectFile">
+                    <i class="fa-solid fa-folder-open"></i> Chọn File TXT
+                </button>
+
+                <div class="upload-card__guide">
+                    <h3><i class="fa-solid fa-circle-info"></i> Cấu trúc file mẫu chuẩn (.txt)</h3>
+                    <pre><code>1. Thủ đô của Việt Nam là gì?
+*A. Hà Nội
+B. TP. Hồ Chí Minh
+C. Đà Nẵng
+D. Cần Thơ
+Giải thích: Hà Nội là thủ đô chính thức của Việt Nam.
+
+2. 1 + 1 bằng bao nhiêu?
+A. 1
+*B. 2
+C. 3
+D. 4</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Màn hình Làm bài (Bố cục 2 cột) -->
+        <section class="quiz-screen" id="quizScreen" style="display: none;">
+            <div class="quiz-screen__layout">
+
+                <!-- Sidebar Bên trái: Danh sách câu hỏi -->
+                <aside class="sidebar">
+                    <div class="sidebar__header">
+                        <h3 class="sidebar__title"><i class="fa-solid fa-list-check"></i> Danh sách câu hỏi</h3>
+                        <span class="sidebar__badge" id="progressBadge">0/0</span>
+                    </div>
+
+                    <!-- Thanh lọc danh sách khi đã xem kết quả -->
+                    <div class="filter-group" id="filterGroup" style="display: none;">
+                        <button class="filter-btn filter-btn--active" data-filter="all">Tất cả</button>
+                        <button class="filter-btn filter-btn--success" data-filter="correct">Câu đúng</button>
+                        <button class="filter-btn filter-btn--danger" data-filter="wrong">Câu sai</button>
+                    </div>
+
+                    <div class="sidebar__grid" id="questionGrid">
+                        <!-- Được render linh hoạt bằng JavaScript -->
+                    </div>
+
+                    <div class="sidebar__legend">
+                        <div class="legend-item"><span class="legend-box legend-box--current"></span> Đang xem</div>
+                        <div class="legend-item"><span class="legend-box legend-box--answered"></span> Đã chọn</div>
+                        <div class="legend-item"><span class="legend-box legend-box--unanswered"></span> Chưa làm</div>
+                    </div>
+                </aside>
+
+                <!-- Khu vực làm bài Bên phải -->
+                <article class="quiz-area">
+                    <div class="quiz-card" id="quizCard">
+                        <div class="quiz-card__header">
+                            <span class="quiz-card__badge" id="questionNumber">Câu 1</span>
+                            <span class="quiz-card__status" id="reviewStatus"></span>
+                        </div>
+
+                        <h2 class="quiz-card__title" id="questionText">Nội dung câu hỏi ở đây?</h2>
+
+                        <div class="quiz-card__options" id="optionsContainer">
+                            <!-- Danh sách đáp án A, B, C, D render từ JS -->
+                        </div>
+
+                        <!-- Khối Giải Thích Chi Tiết -->
+                        <div class="explanation-box" id="explanationBox" style="display: none;">
+                            <div class="explanation-box__header">
+                                <i class="fa-solid fa-lightbulb"></i> Giải thích chi tiết:
+                            </div>
+                            <div class="explanation-box__content" id="explanationText">
+                                Lời giải thích sẽ xuất hiện ở đây...
+                            </div>
+                        </div>
+
+                        <!-- Nút Điều Hướng -->
+                        <div class="quiz-card__footer">
+                            <button class="btn btn--outline" id="btnPrev">
+                                <i class="fa-solid fa-arrow-left"></i> Câu trước
+                            </button>
+                            <button class="btn btn--primary" id="btnNext">
+                                Câu tiếp theo <i class="fa-solid fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Kết quả / Chấm điểm -->
+    <div class="modal-backdrop" id="resultModal" style="display: none;">
+        <div class="modal">
+            <div class="modal__header">
+                <i class="fa-solid fa-square-poll-vertical modal__icon"></i>
+                <h2 class="modal__title">Kết Quả Bài Làm</h2>
+            </div>
+            <div class="modal__body">
+                <div class="score-board">
+                    <div class="score-board__main">
+                        <span class="score-board__number" id="finalScore">0.0</span>
+                        <span class="score-board__max">/ 10 điểm</span>
+                    </div>
+                    <div class="score-board__stats">
+                        <div class="stat-item stat-item--total">
+                            <span class="stat-item__value" id="totalCount">0</span>
+                            <span class="stat-item__label">Tổng câu</span>
+                        </div>
+                        <div class="stat-item stat-item--correct">
+                            <span class="stat-item__value" id="correctCount">0</span>
+                            <span class="stat-item__label">Câu đúng</span>
+                        </div>
+                        <div class="stat-item stat-item--wrong">
+                            <span class="stat-item__value" id="wrongCount">0</span>
+                            <span class="stat-item__label">Câu sai</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal__footer">
+                <button class="btn btn--secondary" id="modalBtnRestart">
+                    <i class="fa-solid fa-rotate-left"></i> Làm lại bài
+                </button>
+                <button class="btn btn--primary" id="modalBtnReview">
+                    <i class="fa-solid fa-eye"></i> Xem đáp án & Lời giải
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
