@@ -1,4 +1,4 @@
-# 🎓 Ứng Dụng Ôn Tập Trắc Nghiệm (Azota Clone)
+# 🎓 Ứng Dụng Ôn Tập Trắc Nghiệm
 
 Ứng dụng web ôn tập trắc nghiệm thông minh, cho phép người dùng tải lên bộ câu hỏi từ file `.txt` và luyện tập trực tiếp trên giao diện hiện đại, thân thiện.
 
